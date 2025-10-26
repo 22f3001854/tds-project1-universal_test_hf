@@ -1,21 +1,24 @@
-# TDS Project 1 - universal_test_hf
+# Universal Test Hf
 
-## Description
-This project implements a Create a web app with multiple files: data.json, styles.css, and script.js. Include SEC API integration with these IDs: id="share-entity-name", id="share-max-value", id="share-min-value". Make it responsive with Bootstrap. application as part of TDS Project 1, Round 1.
+Create a web app with multiple files: data.json, styles.css, and script.js. Include SEC API integration with these IDs: id="share-entity-name", id="share-max-value", id="share-min-value". Make it resp...
 
-## Features
-- Static HTML/JavaScript implementation
-- Bootstrap 5 for styling
-- Responsive design
-- GitHub Pages deployment
+## Generated Files
+
+This project was automatically generated with the following structure:
+
+- `index.html` - Main application interface
+- `README.md` - This documentation file  
+- `LICENSE` - MIT License
 
 ## Usage
-Simply open `index.html` in a web browser or visit the GitHub Pages URL.
 
-## Generated on
-2025-10-26 00:46:58 UTC
+Open `index.html` in a web browser to access the application.
 
-## Task Details
-- Task: universal_test_hf
-- Brief: Create a web app with multiple files: data.json, styles.css, and script.js. Include SEC API integration with these IDs: id="share-entity-name", id="share-max-value", id="share-min-value". Make it responsive with Bootstrap.
-- Round: 1
+## Features
+
+- Responsive Bootstrap 5 design
+- Interactive data visualization
+- File management system
+- Real-time API integration
+
+Generated on: 2025-10-26 02:04:08
