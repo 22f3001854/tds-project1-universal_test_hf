@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Universal Test HF - SEC API Integration</title>
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    /* styles.css content */
+    body {
+      background-color: #f8f9fa;
+    }
+    #loading {
+      display: none;
+    }
+    .card {
+      margin-top: 20px;
+    }
+    .result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <h1 class="text-center mb-4">Universal Test HF - SEC API Integration</h1>
+    <!-- Input Form -->
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <form id="secForm" class="card p-4 shadow-sm">
+          <h4 class="mb-3">Enter Company Details</h4>
+          <div class="mb-3">
+            <label for="share-entity-name" class="form-label">Share Entity Name (CIK or Ticker)</label>
+            <input type="text" class="form-control" id="share-entity-name" placeholder="e.g., AAPL or 0000320193" required />
+          </div>
+          <div class="mb-3">
+            <label for="share-max-value" class="form-label">Max Results</label>
+            <input type="number" class="form-control" id="share-max-value" value="5" min="1" max="100" />
+          </div>
+          <div class="mb-3">
+            <label for="share-min-value" class="form-label">Min Results</label>
+            <input type="number" class="form-control" id="share-min-value" value="1" min="1" max="100" />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Fetch Data</button>
+        </form>
+        <div id="loading" class="text-center my-3">
+          <div class="spinner-border text-primary" role="status"></div>
+          <div class="mt-2">Loading...</div>
+        </div>
+        <div id="error-message" class="alert alert-danger d-none" role="alert"></div>
+        <div class="result" id="result-section" style="display:none;">
+          <div class="card p-3 shadow-sm">
+            <h5>Company Name: <span id="share-entity-name-display"></span></h5>
+            <p>Number of Results: <span id="share-max-value"></span></p>
+            <p>Results count (min): <span id="share-min-value"></span></p>
+            <h6>Results:</h6>
+            <ul class="list-group" id="results-list"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // script.js content
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('secForm');
+      const loadingDiv = document.getElementById('loading');
+      const errorDiv = document.getElementById('error-message');
+      const resultSection = document.getElementById('result-section');
+      const resultsList = document.getElementById('results-list');
+      const shareEntityNameDisplay = document.getElementById('share-entity-name-display');
+      const shareMaxValueSpan = document.getElementById('share-max-value');
+      const shareMinValueSpan = document.getElementById('share-min-value');
+
+      // Function to get URL parameters
+      function getUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+          url: params.get('url') || '',
+          id: params.get('id') || ''
+        };
+      }
+
+      // Initialize form with URL params if available
+      const urlParams = getUrlParams();
+      if (urlParams.id) {
+        document.getElementById('share-entity-name').value = urlParams.id;
+      }
+
+      // Function to show error message
+      function showError(message) {
+        errorDiv.textContent = message;
+        errorDiv.classList.remove('d-none');
+        resultSection.style.display = 'none';
+      }
+
+      // Function to hide error message
+      function hideError() {
+        errorDiv.classList.add('d-none');
+      }
+
+      // Function to fetch data from SEC API
+      async function fetchSECData(cikOrTicker) {
+        // For simplicity, assume CIKs or Tickers are used. 
+        // Here, use a sample API from SEC EDGAR - for real implementation, use actual API or data source.
+        // As SEC API is complex, here we simulate with a placeholder API.
+        // Alternatively, use https://data.sec.gov/api/xbrl/companyfacts/ for real data.
+        // But for demonstration, we'll use a mock API.
+
+        // Example: Use SEC EDGAR's company facts endpoint (no API key required)
+        // Format: https://data.sec.gov/api/xbrl/companyfacts/CIK/COMPANY-TICKER.json
+        // For simplicity, assume input is CIK with leading zeros (e.g., '0000320193' for Apple)
+        // Or ticker, map ticker to CIK if needed.
+
+        // To handle both, attempt to detect if input is numeric (CIK) or ticker.
+
+        // For demonstration, treat input as CIK if numeric, else attempt to resolve ticker to CIK.
+        // Since real ticker to CIK mapping requires additional data, we'll just proceed assuming CIK.
+
+        // Show loading
+        loadingDiv.style.display = 'block';
+        hideError();
+        resultSection.style.display = 'none';
+
+        try {
+          let cik = '';
+          if (/^\d+$/.test(cikOrTicker.trim())) {
+            cik = cikOrTicker.trim().padStart(10, '0');
+          } else {
+            // For simplicity, treat as CIK
+            throw new Error('Please enter a valid CIK (numeric).');
+          }
+
+          const apiUrl = `https://data.sec.gov/api/xbrl/companyfacts/CIK${cik}.json`;
+          const response = await fetch(apiUrl);
+          if (!response.ok) {
+            throw new Error('Failed to fetch data. Check the CIK or try again later.');
+          }
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          throw error;
+        } finally {
+          loadingDiv.style.display = 'none';
+        }
+      }
+
+      // Function to display results
+      function displayResults(data, maxResults, minResults, companyName='') {
+        // For demonstration, we simulate extracting some facts
+        // In real scenario, process 'data' accordingly
+        // Here, list some mock facts
+        resultsList.innerHTML = '';
+
+        // Example: list some facts from data if available
+        // Let's list some keys from data
+        const facts = Object.keys(data['facts'] || {}).slice(0, maxResults);
+        if (facts.length === 0) {
+          resultsList.innerHTML = '<li class="list-group-item">No data available.</li>';
+        } else {
+          for (let i = 0; i < facts.length; i++) {
+            const factKey = facts[i];
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = `Fact: ${factKey}`;
+            resultsList.appendChild(li);
+          }
+        }
+
+        // Update display info
+        document.getElementById('share-entity-name-display').textContent = companyName || 'N/A';
+        shareMaxValueSpan.textContent = maxResults;
+        shareMinValueSpan.textContent = minResults;
+        resultSection.style.display = 'block';
+      }
+
+      // Handle form submit
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const entityName = document.getElementById('share-entity-name').value.trim();
+        const maxVal = parseInt(document.getElementById('share-max-value').value, 10);
+        const minVal = parseInt(document.getElementById('share-min-value').value, 10);
+
+        if (!entityName) {
+          showError('Please enter a valid Share Entity Name.');
+          return;
+        }
+        if (isNaN(maxVal) || isNaN(minVal) || minVal > maxVal || minVal < 1) {
+          showError('Please ensure min and max values are valid and min <= max.');
+          return;
+        }
+
+        try {
+          const data = await fetchSECData(entityName);
+          // For demonstration, use the same name as entered
+          displayResults(data, maxVal, minVal, entityName);
+        } catch (err) {
+          showError(err.message);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
